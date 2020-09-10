@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <link rel="stylesheet" href="./index.css">
+    <title>H5抽奖</title>
+</head>
+<body>
+    <div class="top-content">
+      <img src="./cj-title.png">
+    </div>
+    <audio autoplay="autoplay" id="music">
+        <source src="" type="audio/mpeg" />
+        Your browser does not support the audio element.
+    </audio>
+
+    <div class="c-content">
+        <div class="c-bg">
+            <img src="./cj-bg.png">
+        </div>
+        <div  class="c-zz" >
+            <img src="./cj-zz.png">
+        </div>
+    </div>
+    <div class="btsj">指定手机</div>
+</body>
+
+<script>
+  window.onload=()=>{
+    //指针绑定点击事
+    let jplist = ['谢谢参与','IphoneX','牛排券','百度网盘Vip','Ps4 pro','再来一次','啤酒一扎','纪念U盘'];
+    let l = 22.5;
+    let roateN = [l*15,l*13,l*11,l*9,l*7,l*5,l*3,l*1];
+    let elebg = document.querySelector(".c-bg img");
+    let eleZZ = document.querySelector(".c-zz");
+    let r; //随机数
+    function getRoate(num){
+      //生成随机数
+      r = num || Math.floor(rd(0,7))*1; 
+      console.log(r, roateN[r]);
+      let rdnum = roateN[r] + 3600;     
+      console.log("总度数",rdnum);
+      //旋转动画
+      elebg.style.transform = 'rotate('+rdnum+'deg)';
+      elebg.style.transitionDuration = '5s';
+      elebg.style.transitionTimingFunction = 'cubic-bezier(.07,.25,0,1)';
+      setTimeout(() => {
+        let numR = roateN[r];
+        console.log("定位",numR);
+        alert(jplist[r]);
+        elebg.style = "";
+      }, 5100);
+    }
+    eleZZ.addEventListener("click",()=>{
+      getRoate();
+    })
+    //指定手机
+    let btsjele = document.querySelector(".btsj");
+    btsjele.addEventListener("click",()=>{
+      getRoate(1);
+    })
+    //随机数
+    function rd(n,m){
+      var c = m-n+1;  
+      return (Math.random() * c + n);
+    }
+
+
+
+
+    function autoPlay(src) {
+      const audio = new Audio();
+      // 该元素用来在页面上控制音乐的播放和暂停
+      const musicEle = document.querySelector("#music")
+      audio.src = src;
+      audio.preload = "auto"
+      let played = false;
+
+      // 第一次触摸结束后开始播放音乐
+      document.addEventListener("touchend", () => {
+        if (played) return;
+        if (audio.paused) {
+          played = true;
+          audio.play();
+        }
+      });
+
+      // 兼容微信
+      if (window.WeixinJSBridge) {
+        WeixinJSBridge.invoke("getNetworkType", {}, function (e) {
+          played = true;
+          audio.play();
+        }, false);
+      } else {
+        document.addEventListener("WeixinJSBridgeReady", function () {
+          WeixinJSBridge.invoke("getNetworkType", {}, function (e) {
+            played = true;
+            audio.play();
+          });
+        }, false);
+      }
+    }
+    autoPlay("./music.mp3");
+  }
+
+
+</script>
+</html>
